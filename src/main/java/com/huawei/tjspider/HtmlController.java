@@ -30,14 +30,23 @@ import org.jsoup.Connection;
 import java.nio.charset.Charset;
 
 @Controller
-@RequestMapping(value = "/htm")
 public class HtmlController {
 
 	private static final Logger logger = LoggerFactory.getLogger(HtmlController.class);
 	
-	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET, produces = "text/html; charset=UTF-8")
+	@RequestMapping(value ="/htm", method = {RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=UTF-8")
 	public @ResponseBody String getHtmlContent(@RequestParam("url") String url,HttpServletResponse response)  {
-		logger.info("getHtml url link:"+url);
+		logger.info("/htm getHtml url link:"+url);
+		return getHtmlWithJsoup(url,response);
+	}
+
+	@RequestMapping(value ="/post", method = {RequestMethod.GET,RequestMethod.POST}, produces = "text/html; charset=UTF-8")
+	public @ResponseBody String getHtmlCont(@RequestParam("url") String url,HttpServletResponse response)  {
+		logger.info("/post getHtml url link:"+url);
+		return getHtmlWithJsoup(url,response);
+	}
+
+	private String getHtmlWithJsoup(String url,HttpServletResponse response){
 		Connection conn = Jsoup.connect(url).timeout(30*1000);
 		conn.header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36");
 		Document doc = null;
@@ -56,7 +65,7 @@ public class HtmlController {
 		return null;
 	}
 
-	@RequestMapping(value = "/{charset}", method = RequestMethod.GET, produces = "text/html; charset=UTF-8")
+	@RequestMapping(value = "/htm/{charset}", method = RequestMethod.GET, produces = "text/html; charset=UTF-8")
 	public @ResponseBody String getHtm(@PathVariable String charset, @RequestParam("url") String url,
 			HttpServletResponse response) throws IOException {
 		logger.info(url + " ===== STARTS " + url);
